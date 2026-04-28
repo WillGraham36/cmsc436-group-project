@@ -12,7 +12,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Groupproject">
         <activity
-            android:name=".MainActivity"
+            android:name=".controller.CreateReviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".controller.SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".controller.RecentReviewsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".controller.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".controller.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
