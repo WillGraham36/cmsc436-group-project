@@ -40,31 +40,12 @@
             app:strokeColor="#D9E2EC"
             app:strokeWidth="1dp">
 
-            <LinearLayout
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_placeholder_panel"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="24dp">
+                android:layout_height="match_parent" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/map_placeholder"
-                    android:textColor="#102A43"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="@string/map_placeholder_caption"
-                    android:textColor="#52606D"
-                    android:textSize="15sp" />
-            </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.button.MaterialButton
