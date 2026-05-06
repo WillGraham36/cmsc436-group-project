@@ -72,6 +72,7 @@
                 android:hint="@string/study_spot_name">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/spotNameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -84,6 +85,7 @@
                 android:hint="@string/building_name">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/buildingNameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -96,6 +98,7 @@
                 android:hint="@string/room_number_optional">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/roomNumberEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text" />
@@ -111,6 +114,7 @@
                 android:textStyle="bold" />
 
             <RatingBar
+                android:id="@+id/ratingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -124,6 +128,7 @@
                 android:layout_marginTop="24dp">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/descriptionEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top|start"
@@ -148,26 +153,31 @@
                 android:orientation="vertical">
 
                 <CheckBox
+                    android:id="@+id/quietCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/trait_quiet" />
 
                 <CheckBox
+                    android:id="@+id/moderatelyLoudCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/trait_moderately_loud" />
 
                 <CheckBox
+                    android:id="@+id/loudCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/trait_loud" />
 
                 <CheckBox
+                    android:id="@+id/visibleCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/trait_visible" />
 
                 <CheckBox
+                    android:id="@+id/secludedCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/trait_secluded" />
@@ -189,6 +199,7 @@
                 android:hint="@string/latitude_label">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/latitudeEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal|numberSigned" />
@@ -202,6 +213,7 @@
                 android:hint="@string/longitude_label">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/longitudeEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal|numberSigned" />
