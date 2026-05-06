@@ -12,9 +12,9 @@
     <string name="map_placeholder_caption">Campus pin map will appear here in a future build.</string>
     <string name="create_review_button">Create Review</string>
     <string name="recent_reviews_title">Recent Reviews</string>
-    <string name="recent_reviews_subtitle">A quick look at the latest placeholder study spot feedback.</string>
+    <string name="recent_reviews_subtitle">A quick look at the latest study spot feedback.</string>
     <string name="settings_title">Settings</string>
-    <string name="settings_subtitle">Profile and review history placeholder content.</string>
+    <string name="settings_subtitle">Profile and review history.</string>
     <string name="create_review_title">Create Review</string>
     <string name="create_review_subtitle">Prototype form for adding a new study spot review.</string>
     <string name="study_spot_name">Study Spot Name</string>
@@ -49,4 +49,16 @@
     <string name="prototype_submit_toast">Review submitted in prototype mode.</string>
     <string name="back_button">Back</string>
     <string name="username_label">Username</string>
+    <string name="logout_button">Logout</string>
+    <string name="logout_success">Logged out.</string>
+    <string name="login_failed">Google sign-in failed. Please try again.</string>
+    <string name="login_cancelled">No Google account was selected.</string>
+    <string name="google_web_client_id_missing">Firebase Google sign-in is missing a web client ID. Enable Google sign-in in Firebase and download google-services.json again.</string>
+    <string name="review_submit_success">Review posted.</string>
+    <string name="review_submit_failure">Could not post review. Please try again.</string>
+    <string name="review_login_required">Please log in before posting a review.</string>
+    <string name="review_required_fields">Study spot, building, description, and rating are required.</string>
+    <string name="recent_reviews_empty">No reviews have been posted yet.</string>
+    <string name="recent_reviews_error">Could not load recent reviews.</string>
+    <string name="anonymous_user">Anonymous User</string>
 </resources>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "389593676829",
+    "firebase_url": "https://umd-study-spot-reviewer-default-rtdb.firebaseio.com",
+    "project_id": "umd-study-spot-reviewer",
+    "storage_bucket": "umd-study-spot-reviewer.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:389593676829:android:d141079ddad6f2b5471af4",
+        "android_client_info": {
+          "package_name": "com.example.group_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "389593676829-7b70dplfk6s8hi6g16d10e30uvmvo44i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.group_project",
+            "certificate_hash": "fc41f3e9c84d596eccddd3b0d5dde0c334c5dc8d"
+          }
+        },
+        {
+          "client_id": "389593676829-4d6dkeijkukipdhl5i29qguinq48bj40.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHSTS6Gf_tldWutO8co4aev6sMaFyTOeA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "389593676829-4d6dkeijkukipdhl5i29qguinq48bj40.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
