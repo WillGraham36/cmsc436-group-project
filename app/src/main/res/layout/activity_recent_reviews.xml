@@ -33,6 +33,18 @@
             android:textSize="15sp" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/emptyStateTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="12dp"
+        android:text="@string/recent_reviews_empty"
+        android:textColor="#7B8794"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewReviews"
         android:layout_width="match_parent"

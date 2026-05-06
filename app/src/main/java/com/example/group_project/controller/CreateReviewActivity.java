@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,12 +28,18 @@ import java.util.Map;
 public class CreateReviewActivity extends AppCompatActivity {
     private static final String TAG = "CreateReviewActivity";
 
+    public static final String EXTRA_SPOT_ID = "extra_spot_id";
+    public static final String EXTRA_SPOT_NAME = "extra_spot_name";
+    public static final String EXTRA_BUILDING_NAME = "extra_building_name";
+    public static final String EXTRA_ROOM_NUMBER = "extra_room_number";
+    public static final String EXTRA_LATITUDE = "extra_latitude";
+    public static final String EXTRA_LONGITUDE = "extra_longitude";
+
     private TextInputEditText spotNameEditText;
     private TextInputEditText buildingNameEditText;
     private TextInputEditText roomNumberEditText;
     private TextInputEditText descriptionEditText;
-    private TextInputEditText latitudeEditText;
-    private TextInputEditText longitudeEditText;
+    private TextView selectedSpotTextView;
     private RatingBar ratingBar;
     private CheckBox quietCheckBox;
     private CheckBox moderatelyLoudCheckBox;
@@ -41,6 +48,12 @@ public class CreateReviewActivity extends AppCompatActivity {
     private CheckBox secludedCheckBox;
     private MaterialButton submitReviewButton;
     private DatabaseReference reviewsReference;
+    private DatabaseReference spotsReference;
+    private DatabaseReference rootReference;
+    private String spotId;
+    private double latitude;
+    private double longitude;
+    private boolean hasCoordinates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,25 +61,31 @@ public class CreateReviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_review);
 
         ImageButton backButton = findViewById(R.id.backButton);
-        MaterialButton uploadImagesButton = findViewById(R.id.uploadImagesButton);
         submitReviewButton = findViewById(R.id.submitReviewButton);
+        selectedSpotTextView = findViewById(R.id.selectedSpotTextView);
         spotNameEditText = findViewById(R.id.spotNameEditText);
         buildingNameEditText = findViewById(R.id.buildingNameEditText);
         roomNumberEditText = findViewById(R.id.roomNumberEditText);
         descriptionEditText = findViewById(R.id.descriptionEditText);
-        latitudeEditText = findViewById(R.id.latitudeEditText);
-        longitudeEditText = findViewById(R.id.longitudeEditText);
         ratingBar = findViewById(R.id.ratingBar);
         quietCheckBox = findViewById(R.id.quietCheckBox);
         moderatelyLoudCheckBox = findViewById(R.id.moderatelyLoudCheckBox);
         loudCheckBox = findViewById(R.id.loudCheckBox);
         visibleCheckBox = findViewById(R.id.visibleCheckBox);
         secludedCheckBox = findViewById(R.id.secludedCheckBox);
+
         reviewsReference = FirebaseDatabase.getInstance().getReference("reviews");
+        spotsReference = FirebaseDatabase.getInstance().getReference("pins");
+        rootReference = FirebaseDatabase.getInstance().getReference();
+
+        spotId = getIntent().getStringExtra(EXTRA_SPOT_ID);
+        hasCoordinates = getIntent().hasExtra(EXTRA_LATITUDE) && getIntent().hasExtra(EXTRA_LONGITUDE);
+        latitude = getIntent().getDoubleExtra(EXTRA_LATITUDE, 0.0);
+        longitude = getIntent().getDoubleExtra(EXTRA_LONGITUDE, 0.0);
+
+        bindSelectedSpot();
 
         backButton.setOnClickListener(view -> finish());
-        uploadImagesButton.setOnClickListener(view ->
-                Toast.makeText(this, R.string.prototype_upload_toast, Toast.LENGTH_SHORT).show());
         submitReviewButton.setOnClickListener(view -> submitReview());
     }
 
@@ -79,6 +98,7 @@ public class CreateReviewActivity extends AppCompatActivity {
 
         String spotName = getText(spotNameEditText);
         String buildingName = getText(buildingNameEditText);
+        String roomNumber = getText(roomNumberEditText);
         String description = getText(descriptionEditText);
         int rating = Math.round(ratingBar.getRating());
         if (TextUtils.isEmpty(spotName) || TextUtils.isEmpty(buildingName)
@@ -86,19 +106,28 @@ public class CreateReviewActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.review_required_fields, Toast.LENGTH_SHORT).show();
             return;
         }
+        if (TextUtils.isEmpty(spotId) && !hasCoordinates) {
+            Toast.makeText(this, R.string.review_missing_map_context, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         submitReviewButton.setEnabled(false);
 
-        Map<String, Object> review = new HashMap<>();
         String reviewId = reviewsReference.push().getKey();
+        String resolvedSpotId = TextUtils.isEmpty(spotId) ? spotsReference.push().getKey() : spotId;
         long timestamp = System.currentTimeMillis();
-        Double latitude = parseOptionalDouble(latitudeEditText);
-        Double longitude = parseOptionalDouble(longitudeEditText);
+        if (reviewId == null || resolvedSpotId == null) {
+            submitReviewButton.setEnabled(true);
+            Toast.makeText(this, R.string.review_submit_failure, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        Map<String, Object> review = new HashMap<>();
         review.put("reviewId", reviewId);
+        review.put("spotId", resolvedSpotId);
         review.put("spotName", spotName);
         review.put("buildingName", buildingName);
-        review.put("roomNumber", getText(roomNumberEditText));
+        review.put("roomNumber", roomNumber);
         review.put("description", description);
         review.put("starRating", (double) rating);
         review.put("traits", getSelectedTraits());
@@ -114,36 +143,39 @@ public class CreateReviewActivity extends AppCompatActivity {
         review.put("loud", loudCheckBox.isChecked());
         review.put("visible", visibleCheckBox.isChecked());
         review.put("secluded", secludedCheckBox.isChecked());
-        if (latitude != null) {
-            review.put("latitude", latitude);
-        }
-        if (longitude != null) {
-            review.put("longitude", longitude);
-        }
 
-        if (reviewId == null) {
-            submitReviewButton.setEnabled(true);
-            Toast.makeText(this, R.string.review_submit_failure, Toast.LENGTH_SHORT).show();
-            return;
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("reviews/" + reviewId, review);
+
+        if (TextUtils.isEmpty(spotId)) {
+            Map<String, Object> spot = new HashMap<>();
+            spot.put("spotId", resolvedSpotId);
+            spot.put("spotName", spotName);
+            spot.put("buildingName", buildingName);
+            spot.put("roomNumber", roomNumber);
+            spot.put("latitude", latitude);
+            spot.put("longitude", longitude);
+            spot.put("createdAt", ServerValue.TIMESTAMP);
+            spot.put("createdBy", user.getUid());
+            updates.put("pins/" + resolvedSpotId, spot);
         }
 
         try {
-            reviewsReference.child(reviewId)
-                    .setValue(review)
-                    .addOnCompleteListener(task -> {
-                        submitReviewButton.setEnabled(true);
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "Review submit failed", task.getException());
-                            Toast.makeText(
-                                    this,
-                                    buildSubmitFailureMessage(task.getException()),
-                                    Toast.LENGTH_LONG).show();
-                            return;
-                        }
+            rootReference.updateChildren(updates).addOnCompleteListener(task -> {
+                submitReviewButton.setEnabled(true);
+                if (!task.isSuccessful()) {
+                    Log.w(TAG, "Review submit failed", task.getException());
+                    Toast.makeText(
+                            this,
+                            buildSubmitFailureMessage(task.getException()),
+                            Toast.LENGTH_LONG
+                    ).show();
+                    return;
+                }
 
-                        Toast.makeText(this, R.string.review_submit_success, Toast.LENGTH_SHORT).show();
-                        finish();
-                    });
+                Toast.makeText(this, R.string.review_submit_success, Toast.LENGTH_SHORT).show();
+                finish();
+            });
         } catch (RuntimeException e) {
             submitReviewButton.setEnabled(true);
             Log.w(TAG, "Review submit could not be started", e);
@@ -179,24 +211,43 @@ public class CreateReviewActivity extends AppCompatActivity {
         }
     }
 
-    private Double parseOptionalDouble(TextInputEditText editText) {
-        String value = getText(editText);
-        if (TextUtils.isEmpty(value)) {
-            return null;
-        }
-
-        try {
-            return Double.parseDouble(value);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
     private String getUsername(FirebaseUser user) {
         String displayName = user.getDisplayName();
         if (displayName == null || displayName.trim().isEmpty()) {
             displayName = user.getEmail();
         }
         return displayName == null ? getString(R.string.anonymous_user) : displayName;
+    }
+
+    private void bindSelectedSpot() {
+        String initialSpotName = getIntent().getStringExtra(EXTRA_SPOT_NAME);
+        String initialBuildingName = getIntent().getStringExtra(EXTRA_BUILDING_NAME);
+        String initialRoomNumber = getIntent().getStringExtra(EXTRA_ROOM_NUMBER);
+
+        if (!TextUtils.isEmpty(initialSpotName)) {
+            spotNameEditText.setText(initialSpotName);
+        }
+        if (!TextUtils.isEmpty(initialBuildingName)) {
+            buildingNameEditText.setText(initialBuildingName);
+        }
+        if (!TextUtils.isEmpty(initialRoomNumber)) {
+            roomNumberEditText.setText(initialRoomNumber);
+        }
+
+        if (TextUtils.isEmpty(spotId)) {
+            selectedSpotTextView.setText(R.string.create_review_new_spot_message);
+            return;
+        }
+
+        if (TextUtils.isEmpty(initialSpotName)) {
+            initialSpotName = getString(R.string.study_spot_name);
+        }
+        selectedSpotTextView.setText(getString(
+                R.string.create_review_existing_spot_message,
+                initialSpotName
+        ));
+        spotNameEditText.setEnabled(false);
+        buildingNameEditText.setEnabled(false);
+        roomNumberEditText.setEnabled(false);
     }
 }

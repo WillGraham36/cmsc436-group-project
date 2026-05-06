@@ -48,13 +48,13 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/createReviewButton"
-            style="@style/Widget.Material3.Button"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/create_review_button" />
+            android:text="@string/home_map_instruction"
+            android:textColor="#486581"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

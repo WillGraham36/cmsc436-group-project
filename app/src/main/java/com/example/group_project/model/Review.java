@@ -4,102 +4,181 @@ import java.util.List;
 
 public class Review {
 
-    // Metadata
     private String reviewId;
+    private String spotId;
     private String authorId;
+    private String userId;
+    private String username;
+    private String userEmail;
     private long timestamp;
+    private long clientCreatedAt;
 
-    // Location
     private String spotName;
     private String buildingName;
     private String roomNumber;
-    private double latitude;
-    private double longitude;
 
-    // Review Content
-    private float starRating;
+    private double starRating;
     private String description;
-    private List<String> imageUrls;
+    private List<String> traits;
 
-    // Traits
-    private boolean isQuiet;
-    private boolean isModeratelyLoud;
-    private boolean isLoud;
-    private boolean isVisible;
-    private boolean isSecluded;
+    private boolean quiet;
+    private boolean moderatelyLoud;
+    private boolean loud;
+    private boolean visible;
+    private boolean secluded;
 
     public Review() {
     }
 
-    public Review(String reviewId, String authorId, long timestamp, String spotName,
-                  String buildingName, String roomNumber, double latitude, double longitude,
-                  float starRating, String description, List<String> imageUrls,
-                  boolean isQuiet, boolean isModeratelyLoud, boolean isLoud,
-                  boolean isVisible, boolean isSecluded) {
-        this.reviewId = reviewId;
-        this.authorId = authorId;
-        this.timestamp = timestamp;
-        this.spotName = spotName;
-        this.buildingName = buildingName;
-        this.roomNumber = roomNumber;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.starRating = starRating;
-        this.description = description;
-        this.imageUrls = imageUrls;
-        this.isQuiet = isQuiet;
-        this.isModeratelyLoud = isModeratelyLoud;
-        this.isLoud = isLoud;
-        this.isVisible = isVisible;
-        this.isSecluded = isSecluded;
+    public String getReviewId() {
+        return reviewId;
     }
 
-    // Getters - Setters
-    public String getReviewId() { return reviewId; }
-    public void setReviewId(String reviewId) { this.reviewId = reviewId; }
+    public void setReviewId(String reviewId) {
+        this.reviewId = reviewId;
+    }
 
-    public String getAuthorId() { return authorId; }
-    public void setAuthorId(String authorId) { this.authorId = authorId; }
+    public String getSpotId() {
+        return spotId;
+    }
 
-    public long getTimestamp() { return timestamp; }
-    public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
+    public void setSpotId(String spotId) {
+        this.spotId = spotId;
+    }
 
-    public String getSpotName() { return spotName;}
-    public void setSpotName(String spotName) { this.spotName = spotName; }
+    public String getAuthorId() {
+        return authorId;
+    }
 
-    public String getBuildingName() { return buildingName; }
-    public void setBuildingName(String buildingName) { this.buildingName = buildingName; }
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+    }
 
-    public String getRoomNumber() { return roomNumber; }
-    public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
+    public String getUserId() {
+        return userId;
+    }
 
-    public double getLatitude() { return latitude; }
-    public void setLatitude(double latitude) { this.latitude = latitude; }
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-    public double getLongitude() { return longitude; }
-    public void setLongitude(double longitude) { this.longitude = longitude; }
+    public String getUsername() {
+        return username;
+    }
 
-    public float getStarRating() { return starRating; }
-    public void setStarRating(float starRating) { this.starRating = starRating; }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getUserEmail() {
+        return userEmail;
+    }
 
-    public List<String> getImageUrls() { return imageUrls; }
-    public void setImageUrls(List<String> imageUrls) { this.imageUrls = imageUrls; }
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
 
-    public boolean isQuiet() { return isQuiet; }
-    public void setQuiet(boolean quiet) { isQuiet = quiet; }
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-    public boolean isModeratelyLoud() { return isModeratelyLoud; }
-    public void setModeratelyLoud(boolean moderatelyLoud) { isModeratelyLoud = moderatelyLoud; }
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
-    public boolean isLoud() { return isLoud; }
-    public void setLoud(boolean loud) { isLoud = loud; }
+    public long getClientCreatedAt() {
+        return clientCreatedAt;
+    }
 
-    public boolean isVisible() { return isVisible; }
-    public void setVisible(boolean visible) { isVisible = visible; }
+    public void setClientCreatedAt(long clientCreatedAt) {
+        this.clientCreatedAt = clientCreatedAt;
+    }
 
-    public boolean isSecluded() { return isSecluded; }
-    public void setSecluded(boolean secluded) { isSecluded = secluded; }
+    public String getSpotName() {
+        return spotName;
+    }
+
+    public void setSpotName(String spotName) {
+        this.spotName = spotName;
+    }
+
+    public String getBuildingName() {
+        return buildingName;
+    }
+
+    public void setBuildingName(String buildingName) {
+        this.buildingName = buildingName;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public double getStarRating() {
+        return starRating;
+    }
+
+    public void setStarRating(double starRating) {
+        this.starRating = starRating;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<String> getTraits() {
+        return traits;
+    }
+
+    public void setTraits(List<String> traits) {
+        this.traits = traits;
+    }
+
+    public boolean isQuiet() {
+        return quiet;
+    }
+
+    public void setQuiet(boolean quiet) {
+        this.quiet = quiet;
+    }
+
+    public boolean isModeratelyLoud() {
+        return moderatelyLoud;
+    }
+
+    public void setModeratelyLoud(boolean moderatelyLoud) {
+        this.moderatelyLoud = moderatelyLoud;
+    }
+
+    public boolean isLoud() {
+        return loud;
+    }
+
+    public void setLoud(boolean loud) {
+        this.loud = loud;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    public boolean isSecluded() {
+        return secluded;
+    }
+
+    public void setSecluded(boolean secluded) {
+        this.secluded = secluded;
+    }
 }
