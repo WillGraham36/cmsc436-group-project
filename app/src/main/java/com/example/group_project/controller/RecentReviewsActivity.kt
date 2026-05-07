@@ -55,6 +55,8 @@ class RecentReviewsActivity : BaseBottomNavActivity() {
     }
 
     private fun attachReviewsListener() {
+        // Refresh from local history each time the tab opens
+        // requirement: meaningful local persistent data (1/2) - recent spot ids come from SharedPreferences
         detachReviewsListener()
         recentSpotIds.clear()
         recentSpotIds.addAll(RecentViewedSpotStore.getRecentSpotIds(this))
@@ -69,6 +71,8 @@ class RecentReviewsActivity : BaseBottomNavActivity() {
         emptyStateTextView.visibility = View.GONE
 
         for (spotId in recentSpotIds) {
+            // Firebase queries are per spot, then we merge them back together
+            // requirement: meaningful remote data (getting firebase data) - Recent Reviews loads reviews for saved spot ids
             val reviewsQuery = reviewsReference.orderByChild("spotId").equalTo(spotId)
             val reviewsListener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -104,6 +108,7 @@ class RecentReviewsActivity : BaseBottomNavActivity() {
     }
 
     private fun renderRecentReviews() {
+        // Preserve the order of recently opened spots
         val orderedReviews = ArrayList<Review>()
         for (spotId in recentSpotIds) {
             reviewsBySpotId[spotId]?.let(orderedReviews::addAll)

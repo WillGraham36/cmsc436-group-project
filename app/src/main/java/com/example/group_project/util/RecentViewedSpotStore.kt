@@ -11,11 +11,14 @@ object RecentViewedSpotStore {
     private const val MAX_RECENT_SPOTS = 10
 
     fun recordViewedSpot(context: Context?, spotId: String?) {
+        // This history is device-local, not tied to the Firebase account
+        // requirement: meaningful local persistent data (1/2) - viewed spot ids are saved locally
         if (context == null || TextUtils.isEmpty(spotId)) {
             return
         }
 
         var spotIds = getRecentSpotIds(context)
+        // Move repeats to the front instead of storing duplicates
         spotIds.removeAll { it == spotId }
 
         spotIds.add(0, spotId!!)
@@ -30,6 +33,7 @@ object RecentViewedSpotStore {
     }
 
     fun getRecentSpotIds(context: Context?): MutableList<String> {
+        // Return a mutable list so callers can add or reorder without extra copying
         if (context == null) {
             return ArrayList()
         }

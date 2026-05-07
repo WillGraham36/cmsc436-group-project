@@ -20,6 +20,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyATFxlE54UwnQt48pRemaP3igQKFSb0JSI" />
 
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+
         <activity
             android:name=".controller.CreateReviewActivity"
             android:exported="false" />

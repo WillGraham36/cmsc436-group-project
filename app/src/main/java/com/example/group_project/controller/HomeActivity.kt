@@ -2,6 +2,7 @@ package com.example.group_project.controller
 
 import android.Manifest
 import android.content.Intent
+import android.content.res.Configuration
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.TextUtils
@@ -21,6 +22,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -67,15 +69,30 @@ class HomeActivity : BaseBottomNavActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         val umd = LatLng(38.9869, -76.9426)
+        // requirement: meaningful use of google maps - campus map starts centered on UMD
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(umd, 15f))
+        applyMapTheme(googleMap)
         googleMap.setInfoWindowAdapter(StudySpotInfoWindowAdapter())
+        // Taps on the custom info window decide if this is a new or saved spot
         googleMap.setOnInfoWindowClickListener(::handleInfoWindowClick)
         googleMap.setOnMapLongClickListener(::handleMapLongPress)
         renderMarkers()
         enableUserLocation()
     }
 
+    private fun applyMapTheme(googleMap: GoogleMap) {
+        // Keep Google Maps visually matched to the app theme
+        val nightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
+            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style_night))
+        } else {
+            googleMap.setMapStyle(null)
+        }
+    }
+
     private fun attachDatabaseListeners() {
+        // Pins and reviews both affect what the map markers should say
+        // requirement: meaningful remote data (getting firebase data) - map reads pins and reviews
         if (spotsListener == null) {
             spotsListener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -121,6 +138,7 @@ class HomeActivity : BaseBottomNavActivity(), OnMapReadyCallback {
     private fun renderMarkers() {
         val googleMap = map ?: return
 
+        // Rebuild markers from the latest Firebase state
         googleMap.clear()
         markerPayloads.clear()
 
@@ -137,6 +155,7 @@ class HomeActivity : BaseBottomNavActivity(), OnMapReadyCallback {
             markerPayloads[marker.id] = payload
         }
 
+        // Long-press drafts live locally until the user writes the first review
         draftLatLng?.let { latLng ->
             val draftMarker = googleMap.addMarker(
                 MarkerOptions()
@@ -153,6 +172,7 @@ class HomeActivity : BaseBottomNavActivity(), OnMapReadyCallback {
     }
 
     private fun buildSpotSummaries(): Map<String, SpotSummary> {
+        // Group reviews so each marker can show a quick rating summary
         val reviewsBySpotId = HashMap<String, MutableList<Review>>()
         for (review in reviews) {
             val spotId = review.spotId
@@ -183,6 +203,7 @@ class HomeActivity : BaseBottomNavActivity(), OnMapReadyCallback {
     }
 
     private fun handleMapLongPress(latLng: LatLng) {
+        // A draft marker is just a proposed spot location
         draftLatLng = latLng
         renderMarkers()
     }
@@ -195,6 +216,8 @@ class HomeActivity : BaseBottomNavActivity(), OnMapReadyCallback {
         payload ?: return
 
         if (payload.isDraft()) {
+            // Draft spots go straight into the create-review form
+            // requirement: 2 views sharing data between each other - HomeActivity passes draft coordinates to CreateReviewActivity
             val intent = Intent(this, CreateReviewActivity::class.java)
             intent.putExtra(CreateReviewActivity.EXTRA_LATITUDE, payload.latitude)
             intent.putExtra(CreateReviewActivity.EXTRA_LONGITUDE, payload.longitude)
@@ -205,6 +228,8 @@ class HomeActivity : BaseBottomNavActivity(), OnMapReadyCallback {
         }
 
         val spot = payload.spot ?: return
+        // Save this so Recent Reviews can show spots opened on this device
+        // requirement: 2 views sharing data between each other - HomeActivity passes a spot id to SpotDetailsActivity
         RecentViewedSpotStore.recordViewedSpot(this, spot.spotId)
         val intent = Intent(this, SpotDetailsActivity::class.java)
         intent.putExtra(SpotDetailsActivity.EXTRA_SPOT_ID, spot.spotId)
@@ -212,6 +237,7 @@ class HomeActivity : BaseBottomNavActivity(), OnMapReadyCallback {
     }
 
     private fun enableUserLocation() {
+        // Ask once before enabling the blue location dot
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
         ) {
@@ -230,6 +256,7 @@ class HomeActivity : BaseBottomNavActivity(), OnMapReadyCallback {
     }
 
     private fun buildSpotSubtitle(spot: StudySpot, summary: SpotSummary?): String {
+        // Info windows need a compact two-line summary
         val builder = StringBuilder()
         builder.append(spot.buildingName)
         if (!TextUtils.isEmpty(spot.roomNumber)) {
@@ -248,6 +275,7 @@ class HomeActivity : BaseBottomNavActivity(), OnMapReadyCallback {
         private val layoutInflater = LayoutInflater.from(this@HomeActivity)
 
         override fun getInfoWindow(marker: Marker): View? {
+            // Markers carry their Firebase or draft data in a small payload object
             var payload = markerPayloads[marker.id]
             if (payload == null) {
                 payload = marker.tag as? MarkerPayload

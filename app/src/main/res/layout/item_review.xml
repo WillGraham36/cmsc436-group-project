@@ -7,10 +7,10 @@
     android:layout_marginStart="2dp"
     android:layout_marginEnd="2dp"
     android:layout_marginBottom="16dp"
-    app:cardBackgroundColor="#FFFFFF"
+    app:cardBackgroundColor="?attr/colorSurfaceContainer"
     app:cardCornerRadius="20dp"
     app:cardElevation="1dp"
-    app:strokeColor="#D9E2EC"
+    app:strokeColor="?attr/colorOutlineVariant"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -23,7 +23,7 @@
             android:id="@+id/textSpotName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#102A43"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="20sp"
             android:textStyle="bold"
             tools:text="McKeldin Library" />
@@ -39,7 +39,7 @@
                 android:id="@+id/textRatingSummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#D97706"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 tools:text="Rating: 4.5/5" />
@@ -50,14 +50,14 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="|"
-                android:textColor="#7B8794"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/textTimestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#7B8794"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="13sp"
                 tools:text="10 minutes ago" />
         </LinearLayout>
@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:textColor="#334E68"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="15sp"
             tools:text="Quiet in the upper floors, plenty of outlets, and usually easy to find a seat in the afternoon." />
 

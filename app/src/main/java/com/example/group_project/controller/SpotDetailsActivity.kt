@@ -60,11 +60,15 @@ class SpotDetailsActivity : BaseBottomNavActivity() {
         coordinatesTextView = findViewById(R.id.coordinatesTextView)
         emptyStateTextView = findViewById(R.id.emptyStateTextView)
 
+        // Reviews on this page use the same card as recent and profile reviews
+        // requirement: 2 instances of views not reviewed in class - recycler view for spot reviews
         reviewAdapter = ReviewAdapter(ArrayList())
         reviewsRecyclerView.layoutManager = LinearLayoutManager(this)
         reviewsRecyclerView.adapter = reviewAdapter
 
         spotsReference = FirebaseDatabase.getInstance().getReference("pins")
+        // Only listen to reviews for the selected spot
+        // requirement: meaningful remote data (getting firebase data) - SpotDetails loads Firebase reviews for this spot
         reviewsQuery = FirebaseDatabase.getInstance()
             .getReference("reviews")
             .orderByChild("spotId")
@@ -85,6 +89,7 @@ class SpotDetailsActivity : BaseBottomNavActivity() {
     }
 
     private fun attachListeners() {
+        // Keep the spot info and its reviews live while this screen is open
         if (spotListener == null) {
             spotListener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -115,6 +120,7 @@ class SpotDetailsActivity : BaseBottomNavActivity() {
         if (reviewsListener == null) {
             reviewsListener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    // Newest reviews should appear at the top
                     val reviews = ArrayList<Review>()
                     for (child in snapshot.children) {
                         child.getValue(Review::class.java)?.let(reviews::add)
@@ -165,6 +171,7 @@ class SpotDetailsActivity : BaseBottomNavActivity() {
     }
 
     private fun updateSummary(reviews: List<Review>) {
+        // Recalculate the header every time Firebase sends a review update
         val reviewCount = reviews.size
         var averageRating = 0.0
         for (review in reviews) {
@@ -186,6 +193,7 @@ class SpotDetailsActivity : BaseBottomNavActivity() {
     }
 
     private fun launchCreateReview() {
+        // Pass spot data forward so the form can lock the location fields
         val spot = currentSpot
         if (spot == null) {
             Toast.makeText(this, R.string.spot_details_missing_spot, Toast.LENGTH_SHORT).show()
@@ -193,6 +201,7 @@ class SpotDetailsActivity : BaseBottomNavActivity() {
         }
 
         val intent = Intent(this, CreateReviewActivity::class.java)
+        // requirement: 2 views sharing data between each other - SpotDetailsActivity passes spot info to CreateReviewActivity
         intent.putExtra(CreateReviewActivity.EXTRA_SPOT_ID, spot.spotId)
         intent.putExtra(CreateReviewActivity.EXTRA_SPOT_NAME, spot.spotName)
         intent.putExtra(CreateReviewActivity.EXTRA_BUILDING_NAME, spot.buildingName)

@@ -1,5 +1,6 @@
 package com.example.group_project.model
 
+// Firebase needs a no-arg class with mutable fields
 class Review {
     var reviewId: String = ""
     var spotId: String = ""

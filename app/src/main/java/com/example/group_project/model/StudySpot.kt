@@ -1,5 +1,6 @@
 package com.example.group_project.model
 
+// Stored under pins in Firebase
 class StudySpot {
     var spotId: String = ""
     var spotName: String = ""

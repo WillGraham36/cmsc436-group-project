@@ -22,6 +22,7 @@ class ReviewAdapter(reviewList: List<Review>?) : RecyclerView.Adapter<ReviewAdap
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
         val currentReview = reviewList[position]
         holder.spotNameText.text = currentReview.spotName
+        // Keep rating display consistent across all review lists
         holder.ratingText.text = String.format(
             Locale.US,
             "Rating: %.1f/5",
@@ -34,6 +35,7 @@ class ReviewAdapter(reviewList: List<Review>?) : RecyclerView.Adapter<ReviewAdap
     override fun getItemCount(): Int = reviewList.size
 
     fun setReviews(reviews: List<Review>?) {
+        // Simple full refresh is fine for these small class-project lists
         reviewList.clear()
         if (reviews != null) {
             reviewList.addAll(reviews)

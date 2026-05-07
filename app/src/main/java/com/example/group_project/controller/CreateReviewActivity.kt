@@ -26,6 +26,7 @@ class CreateReviewActivity : AppCompatActivity() {
     private lateinit var roomNumberEditText: TextInputEditText
     private lateinit var descriptionEditText: TextInputEditText
     private lateinit var selectedSpotTextView: TextView
+    private lateinit var ratingSummaryTextView: TextView
     private lateinit var ratingBar: RatingBar
     private lateinit var quietCheckBox: CheckBox
     private lateinit var moderatelyLoudCheckBox: CheckBox
@@ -52,6 +53,8 @@ class CreateReviewActivity : AppCompatActivity() {
         buildingNameEditText = findViewById(R.id.buildingNameEditText)
         roomNumberEditText = findViewById(R.id.roomNumberEditText)
         descriptionEditText = findViewById(R.id.descriptionEditText)
+        ratingSummaryTextView = findViewById(R.id.ratingSummaryTextView)
+        // requirement: 2 instances of views not reviewed in class - starRating view / RatingBar
         ratingBar = findViewById(R.id.ratingBar)
         quietCheckBox = findViewById(R.id.quietCheckBox)
         moderatelyLoudCheckBox = findViewById(R.id.moderatelyLoudCheckBox)
@@ -68,10 +71,24 @@ class CreateReviewActivity : AppCompatActivity() {
         latitude = intent.getDoubleExtra(EXTRA_LATITUDE, 0.0)
         longitude = intent.getDoubleExtra(EXTRA_LONGITUDE, 0.0)
 
+        // Fill in spot details when this review came from an existing marker
         bindSelectedSpot()
+        setupRatingBarListener()
 
         backButton.setOnClickListener { finish() }
         submitReviewButton.setOnClickListener { submitReview() }
+    }
+
+    private fun setupRatingBarListener() {
+        updateRatingSummary(ratingBar.rating.roundToInt())
+        // requirement: where the listeners are on one of these new gui elements - RatingBar listener updates selected rating text
+        ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
+            updateRatingSummary(rating.roundToInt())
+        }
+    }
+
+    private fun updateRatingSummary(rating: Int) {
+        ratingSummaryTextView.text = getString(R.string.selected_rating_label, rating)
     }
 
     private fun submitReview() {
@@ -99,6 +116,7 @@ class CreateReviewActivity : AppCompatActivity() {
 
         submitReviewButton.isEnabled = false
 
+        // New study spots get a new pin id, existing ones keep their current id
         val reviewId = reviewsReference.push().key
         val resolvedSpotId = if (TextUtils.isEmpty(spotId)) spotsReference.push().key else spotId
         val timestamp = System.currentTimeMillis()
@@ -131,11 +149,13 @@ class CreateReviewActivity : AppCompatActivity() {
             "secluded" to secludedCheckBox.isChecked
         )
 
+        // One multi-location write keeps the review and optional pin in sync
         val updates = hashMapOf<String, Any?>(
             "reviews/$reviewId" to review
         )
 
         if (TextUtils.isEmpty(spotId)) {
+            // First review for a draft marker creates the study spot too
             val spot = hashMapOf<String, Any?>(
                 "spotId" to resolvedSpotId,
                 "spotName" to spotName,
@@ -186,6 +206,7 @@ class CreateReviewActivity : AppCompatActivity() {
     }
 
     private fun getSelectedTraits(): List<String> {
+        // Store trait labels for easy display and booleans for easy filtering later
         val traits = ArrayList<String>()
         addTraitIfChecked(traits, quietCheckBox)
         addTraitIfChecked(traits, moderatelyLoudCheckBox)
@@ -210,6 +231,7 @@ class CreateReviewActivity : AppCompatActivity() {
     }
 
     private fun bindSelectedSpot() {
+        // Existing spots should not be renamed from the review screen
         var initialSpotName = intent.getStringExtra(EXTRA_SPOT_NAME)
         val initialBuildingName = intent.getStringExtra(EXTRA_BUILDING_NAME)
         val initialRoomNumber = intent.getStringExtra(EXTRA_ROOM_NUMBER)

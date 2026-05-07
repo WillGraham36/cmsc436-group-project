@@ -35,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        // Skip the login screen if Firebase already has a user
         if (auth.currentUser != null) {
             goToHome()
         }
@@ -55,6 +56,7 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, R.string.login_failed, Toast.LENGTH_SHORT).show()
                 return
             }
+            // Hand the Google token to Firebase for the actual app session
             firebaseAuthWithGoogle(account.idToken!!)
         } catch (e: ApiException) {
             Log.w(TAG, "Google sign-in failed. Status code: ${e.statusCode}", e)
@@ -75,6 +77,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun startGoogleSignIn() {
+        // Sign out first so the account picker can appear again
         googleSignInClient.signOut().addOnCompleteListener {
             startActivityForResult(googleSignInClient.signInIntent, RC_GOOGLE_SIGN_IN)
         }

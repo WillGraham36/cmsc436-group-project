@@ -23,6 +23,7 @@ object SpotUiFormatter {
     }
 
     fun formatRelativeTime(timestamp: Long): String {
+        // Some older records may not have a timestamp yet
         if (timestamp <= 0L) {
             return "Recently"
         }
@@ -41,6 +42,7 @@ object SpotUiFormatter {
     }
 
     fun collectTopTraits(reviews: List<Review>?, limit: Int): List<String> {
+        // Count repeated tags so marker summaries show the most common ones
         if (reviews.isNullOrEmpty() || limit <= 0) {
             return emptyList()
         }
@@ -65,6 +67,7 @@ object SpotUiFormatter {
     }
 
     fun uniqueTraits(reviews: List<Review>?): List<String> {
+        // Newer reviews get first chance at ordering the tag list
         if (reviews.isNullOrEmpty()) {
             return emptyList()
         }
